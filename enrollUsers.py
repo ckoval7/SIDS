@@ -2,7 +2,7 @@
 
 from idService import DoorController
 from getpass import getpass
-import json
+# import json
 
 host = "172.16.0.206"
 user = "root"

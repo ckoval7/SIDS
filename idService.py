@@ -4,14 +4,6 @@ import json
 import requests
 from requests.auth import HTTPDigestAuth
 
-# user = "root"
-# password = "badges"
-#
-# base_url = "http://172.16.0.206"
-
-entry_idPoint = "Axis-b8a44f251f8a:1632430106.372559000"
-exit_idPoint = "Axis-b8a44f251f8a:1632430106.572800000"
-
 
 class DoorController:
     acs_path = "/vapix/pacs"
