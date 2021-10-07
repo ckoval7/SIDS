@@ -48,16 +48,20 @@ def testCredential():
 #     print(controller1.removeCredential(cred["token"]))
 
 
-try:
-    user_token = createUser()
-    print(SetCredential(user_token, access_profile))
-except Exception as e:
-    print("Enrollment Error!")
-    print(e)
-    quit()
+while True:
+    try:
+        user_token = createUser()
+        print(SetCredential(user_token, access_profile))
+    except Exception as e:
+        print("Enrollment Error!")
+        print(e)
+        quit(-1)
 
+    print("Enrollment Success")
 
-print("Enrollment Success")
-
-print("Testing credentials")
-print(testCredential())
+    print("Testing credentials")
+    print(testCredential())
+    more = input("Enroll another? [Y/n]: ")
+    no = ["n", "N", "no", "No", "NO"]
+    if more in no:
+        quit(1)

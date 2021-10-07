@@ -9,8 +9,9 @@ class DoorController:
     acs_path = "/vapix/pacs"
     door_path = "/vapix/doorcontrol"
     idPoint_path = "/vapix/idpoint"
+    event_path = "/vapix/eventlogger"
 
-    def __init__(self, host, user, password, secure=False):
+    def __init__(self, host, user, password, secure=False, debugging=False):
         self.user = user
         self.password = password
         self.host = host
@@ -27,10 +28,10 @@ class DoorController:
         self.access_points = self.getAccessPointList()
 
         self.door_token = self.getDoorConfigurationList()["DoorConfiguration"][0]["token"]
-
-        print(self.token)
-        # print(self.access_points)
-        print(self.door_token)
+        if debugging:
+            print(self.token)
+            # print(self.access_points)
+            print(self.door_token)
 
     #####################################
     # Returns a list of door controllers and their access points
@@ -51,7 +52,7 @@ class DoorController:
     #####################################
     # Returns a list of users
     #####################################
-    def getUsers(self):
+    def getAllUsers(self):
         payload = {"axudb:GetUserList": {}}
         response = requests.post(self.url + self.acs_path, json=payload,
                                  auth=HTTPDigestAuth(self.user, self.password))
@@ -62,6 +63,59 @@ class DoorController:
             print(response.text)
 
         return self.users
+
+    #####################################
+    # Returns a list of users
+    #####################################
+    def getUser(self, userToken):
+        user = {}
+        payload = {"axudb:GetUser": {"Token": [userToken]}}
+        response = requests.post(self.url + self.acs_path, json=payload,
+                                 auth=HTTPDigestAuth(self.user, self.password))
+
+        if response.status_code == 200:
+            user = json.loads(response.text)
+        else:
+            print(response.text)
+
+        return user
+
+    ##############################################
+    # Create a new user or update an exisiting one
+    ##############################################
+    def createUser(self, fname, lname):
+        payload = {
+            "axudb:SetUser": {
+                "User": [
+                  {
+                      "Name": f"{lname}, {fname}",
+                      "Description": "",
+                      "Attribute": [
+                          {
+                              "type": "string",
+                              "Name": "FirstName",
+                              "Value": fname
+                          },
+                          {
+                              "type": "string",
+                              "Name": "LastName",
+                              "Value": lname
+                          }
+                      ]
+                  }
+                ]
+            }
+        }
+
+        response = requests.post(self.url + self.acs_path, json=payload,
+                                 auth=HTTPDigestAuth(self.user, self.password))
+
+        if response.status_code == 200:
+            self.last_user_token = json.loads(response.text)
+        else:
+            print(response.text)
+
+        return self.last_user_token
 
     #####################################
     # Returns a list of IdPoints (badge readers)
@@ -246,40 +300,6 @@ class DoorController:
 
         return text
 
-    def createUser(self, fname, lname):
-        payload = {
-            "axudb:SetUser": {
-                "User": [
-                  {
-                      "Name": f"{lname}, {fname}",
-                      "Description": "",
-                      "Attribute": [
-                          {
-                              "type": "string",
-                              "Name": "FirstName",
-                              "Value": fname
-                          },
-                          {
-                              "type": "string",
-                              "Name": "LastName",
-                              "Value": lname
-                          }
-                      ]
-                  }
-                ]
-            }
-        }
-
-        response = requests.post(self.url + self.acs_path, json=payload,
-                                 auth=HTTPDigestAuth(self.user, self.password))
-
-        if response.status_code == 200:
-            self.last_user_token = json.loads(response.text)
-        else:
-            print(response.text)
-
-        return self.last_user_token
-
     def createCredential(self, card_num, card_hex, user_token, access_profile):
         payload = {
             "pacsaxis:SetCredential": {
@@ -333,7 +353,18 @@ class DoorController:
         else:
             print(response.text)
 
-        # return text
+    def removeUser(self, user_token):
+        payload = {
+            "axudb:RemoveUser": {"Token": [user_token]}
+        }
+
+        response = requests.post(self.url + self.acs_path, json=payload,
+                                 auth=HTTPDigestAuth(self.user, self.password))
+
+        if response.status_code == 200:
+            return response.text
+        else:
+            print(response.text)
 
     def accessRequest(self, card_hex, idp_token):
         payload = {
@@ -400,3 +431,27 @@ class DoorController:
             print(response.text)
 
         return text
+
+    def getEventLog(self, start, stop, topic, value):
+        payload = {
+            "axlog:FetchEvents": {
+                "Start": start,  # ISO 8601 "2012-11-27T00:00:00"
+                "Stop": stop,  # ISO 8601 "2012-11-27T14:00:00"
+                "Filters": [
+                    {
+                        "Key": topic,
+                        "Value": value
+                    }
+                ]
+            }
+        }
+        response = requests.post(self.url + self.event_path, json=payload,
+                                 auth=HTTPDigestAuth(self.user, self.password))
+
+        if response.status_code == 200:
+            # self.events = response.text)
+            self.events = json.loads(response.text)
+        else:
+            print(response.text)
+
+        return self.events

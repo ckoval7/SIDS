@@ -2,6 +2,8 @@
 
 from idService import DoorController
 import json
+import datetime
+
 
 host = "172.16.0.206"
 user = "root"
@@ -17,23 +19,30 @@ print("Unit Tests:")
 # print("getAccessProfileList:\n")
 # access_profile = controller1.getAccessProfileList()
 # print(json.dumps(access_profile, indent=2) + "\n\n")
+#
 
-# print("getCredentialList:\n")
+
+# Delete all credentials!
+# creds = controller1.getCredentialList()
+# for cred in creds["Credential"]:
+#     # print(cred["token"])
+#     print(controller1.removeCredential(cred["token"]))
+#
 # creds = controller1.getCredentialList()
 # print(json.dumps(creds, indent=2) + "\n\n")
 
-
-# # Delete all credentials!
-# for cred in creds["Credential"]:
-#     print(cred["token"])
-#     print(controller1.removeCredential(cred["token"]))
-
 # print("getUsers:\n")
-# users = controller1.getUsers()
 # print(json.dumps(users, indent=2) + "\n\n")
+
+# Delete all users!
+users = controller1.getAllUsers()
+print(json.dumps(users, indent=2) + "\n\n")
+for user in users["User"]:
+    print(controller1.removeUser(user["token"]))
+users = controller1.getAllUsers()
 #
-card_num = "8399"
-card_hex = "0222419f"
+# card_num = "8399"
+# card_hex = "0222419f"
 
 # for user in users["User"]:
 # print(controller1.createCredential(card_num, card_hex, users["User"][0]["token"],
@@ -86,3 +95,25 @@ card_hex = "0222419f"
 # print(json.dumps(controller1.getAccessPointList(), indent=2) + "\n\n")
 
 # controller1.createAccessProfile("everyone")
+
+# token = "Axis-b8a44f251f8a:1633293628.325140000"
+# user = controller1.getUser(token)
+# print(json.dumps(user, indent=2))
+
+# start = (datetime.datetime.utcnow().replace(microsecond=0) - datetime.timedelta(hours=24)).isoformat()  # "2012-11-27T00:00:00"
+# stop = datetime.datetime.utcnow().replace(microsecond=0).isoformat()
+# key = "topic0"
+# value = "AccessControl"
+# log = controller1.getEventLog(start, stop, key, value)
+# print(json.dumps(log, indent=2))
+#
+# for entry in log["Event"]:
+#     for topic in entry["KeyValues"]:
+#         if topic["Value"] == "AccessGranted":
+#             for x in entry["KeyValues"]:
+#                 if x["Key"] == "CredentialHolderName":
+#                     token = x["Value"]
+#                     user = controller1.getUser(token)
+#                     print(json.dumps(user, indent=2))
+#         elif topic["Value"] == "Denied":
+#             print(json.dumps(entry, indent=2))
