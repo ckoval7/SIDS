@@ -48,7 +48,7 @@ def createDB():
 
 
 def get_accesspoints():
-    ap_list = controller1.getAccessPointList()
+    ap_list = controller1.get_AccessPointList()
     for ap in ap_list["AccessPoint"]:
         token = ap["token"]
         for attribute in ap["Attribute"]:
@@ -64,7 +64,7 @@ def get_accesspoints():
 
 
 def get_users():
-    users = controller1.getAllUsers()
+    users = controller1.get_all_users()
     for user in users["User"]:
         token = user["token"]
         status = "out"
@@ -154,7 +154,7 @@ if __name__ == '__main__':
     stop = datetime.datetime.utcnow().replace(microsecond=0).isoformat()
     key = "topic0"
     value = "AccessControl"
-    log_in_out(controller1.getEventLog(start, stop, key, value))
+    log_in_out(controller1.get_EventLog(start, stop, key, value))
 
 # log = controller1.getEventLog(start, stop, key, value)
 # # print(json.dumps(log, indent=2))

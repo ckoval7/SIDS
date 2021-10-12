@@ -21,13 +21,13 @@ class DoorController:
         else:
             self.url = "http://" + self.host
 
-        controller = self.getControllers()
+        controller = self.get_controllers()
 
         self.token = controller['AccessController'][0]['token']
 
-        self.access_points = self.getAccessPointList()
+        self.access_points = self.get_AccessPointList()
 
-        self.door_token = self.getDoorConfigurationList()["DoorConfiguration"][0]["token"]
+        self.door_token = self.get_DoorConfigurationList()["DoorConfiguration"][0]["token"]
         if debugging:
             print(self.token)
             # print(self.access_points)
@@ -36,7 +36,7 @@ class DoorController:
     #####################################
     # Returns a list of door controllers and their access points
     #####################################
-    def getControllers(self):
+    def get_controllers(self):
         payload = {"pacsaxis:GetAccessControllerList": {}}
 
         response = requests.post(self.url + self.acs_path, json=payload,
@@ -52,7 +52,7 @@ class DoorController:
     #####################################
     # Returns a list of users
     #####################################
-    def getAllUsers(self):
+    def get_all_users(self):
         payload = {"axudb:GetUserList": {}}
         response = requests.post(self.url + self.acs_path, json=payload,
                                  auth=HTTPDigestAuth(self.user, self.password))
@@ -67,7 +67,7 @@ class DoorController:
     #####################################
     # Returns a list of users
     #####################################
-    def getUser(self, userToken):
+    def get_user(self, userToken):
         user = {}
         payload = {"axudb:GetUser": {"Token": [userToken]}}
         response = requests.post(self.url + self.acs_path, json=payload,
@@ -83,7 +83,7 @@ class DoorController:
     ##############################################
     # Create a new user or update an exisiting one
     ##############################################
-    def createUser(self, fname, lname):
+    def create_user(self, fname, lname):
         payload = {
             "axudb:SetUser": {
                 "User": [
@@ -120,7 +120,7 @@ class DoorController:
     #####################################
     # Returns a list of IdPoints (badge readers)
     #####################################
-    def getIdPoints(self):
+    def get_IdPoints(self):
         payload = {"axtid:GetIdPointInfoList": {}}
 
         response = requests.post(self.url + self.idPoint_path, json=payload,
@@ -133,7 +133,7 @@ class DoorController:
 
         return self.idPoints
 
-    def getAuthProfileList(self):
+    def get_AuthenticationProfileList(self):
         payload = {"pacsaxis:GetAuthenticationProfileList": {}}
 
         response = requests.post(self.url + self.acs_path, json=payload,
@@ -146,7 +146,7 @@ class DoorController:
 
         return self.auth_profiles
 
-    def getAccessPointList(self):
+    def get_AccessPointList(self):
         payload = {"pacsaxis:GetAccessPointList": {}}
 
         response = requests.post(self.url + self.acs_path, json=payload,
@@ -159,7 +159,7 @@ class DoorController:
 
         return self.access_points
 
-    def getDoorConfigurationList(self):
+    def get_DoorConfigurationList(self):
         payload = {"axtdc:GetDoorConfigurationList": {}}
 
         response = requests.post(self.url + self.door_path, json=payload,
@@ -172,7 +172,7 @@ class DoorController:
 
         return self.doors_config_list
 
-    def getAccessProfileList(self):
+    def get_AccessProfileList(self):
         payload = {
             "pacsaxis:GetAccessProfileList": {}
         }
@@ -187,7 +187,7 @@ class DoorController:
 
         return self.access_profiles
 
-    def getCredentialList(self):
+    def get_CredentialList(self):
         payload = {
             "pacsaxis:GetCredentialList": {}
         }
@@ -206,7 +206,7 @@ class DoorController:
     # readers/REX devices that allow access in that direction. For example, a
     # door with a reader allowing access going in and a REX device allowing
     # access going out will require two AccessPoints associated with it.
-    def updateAccessPoint(self, ap_token, door_token, idpoint_token, direction, auth_profile="CardOnly"):
+    def update_AccessPoint(self, ap_token, door_token, idpoint_token, direction, auth_profile="CardOnly"):
         payload = {
             "pacsaxis:SetAccessPoint": {
                 "AccessPoint": [
@@ -253,7 +253,7 @@ class DoorController:
 
         return text
 
-    def createAccessProfile(self, name, auth_profile="CardOnly"):
+    def create_AccessProfile(self, name, auth_profile="CardOnly"):
         # Access profile = group
 
         payload = {
@@ -300,7 +300,7 @@ class DoorController:
 
         return text
 
-    def createCredential(self, card_num, card_hex, user_token, access_profile):
+    def create_Credential(self, card_num, card_hex, user_token, access_profile):
         payload = {
             "pacsaxis:SetCredential": {
                 "Credential": [
@@ -340,7 +340,7 @@ class DoorController:
 
         return self.last_credential_token
 
-    def removeCredential(self, cred_token):
+    def remove_Credential(self, cred_token):
         payload = {
             "pacsaxis:RemoveCredential": {"Token": [cred_token]}
         }
@@ -353,7 +353,7 @@ class DoorController:
         else:
             print(response.text)
 
-    def removeUser(self, user_token):
+    def remove_User(self, user_token):
         payload = {
             "axudb:RemoveUser": {"Token": [user_token]}
         }
@@ -366,7 +366,7 @@ class DoorController:
         else:
             print(response.text)
 
-    def accessRequest(self, card_hex, idp_token):
+    def access_request(self, card_hex, idp_token):
         payload = {
             "pacsaxis:RequestAccess": {
                 "Action": "Access",
@@ -391,7 +391,7 @@ class DoorController:
 
         return text
 
-    def createAuthenticationProfile(self):
+    def create_AuthenticationProfile(self):
         # Each AccessPoint is associated with zero or more AuthenticationProfiles
         # indicating when it is possible to gain access to the door. For each type
         # of IdData in credential (PIN, card, card and PIN, or REX) there is at most
@@ -432,7 +432,7 @@ class DoorController:
 
         return text
 
-    def getEventLog(self, start, stop, topic, value):
+    def get_EventLog(self, start, stop, topic, value):
         payload = {
             "axlog:FetchEvents": {
                 "Start": start,  # ISO 8601 "2012-11-27T00:00:00"
@@ -455,3 +455,9 @@ class DoorController:
             print(response.text)
 
         return self.events
+
+
+class User:
+    def __init__(self, firstName, lastName):
+        self.first_name = firstName
+        self.last_name = lastName

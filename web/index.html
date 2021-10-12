@@ -1,0 +1,67 @@
+<html>
+<head>
+  <title>SIDS</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="modal.js"></script>
+  <script src="idService.js"></script>
+</head>
+<body>
+  <div class="main">
+    <h2>SIDS</h2>
+    <input type="button" class="big_button no-select" id="newUser" value="Add User"
+      onclick="showModal(document.getElementById('addUser'))"/>
+    <input type="button" class="big_button no-select" value="Check User" />
+    <br>
+    <input type="button" class="big_button no-select" value="Update User" />
+    <input type="button" class="big_button no-select" value="Lost Badge" />
+  </div>
+
+  <div id="addUser" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span onclick="closeModal(document.getElementById('addUser'))" class="close">
+        &times;
+      </span>
+      <h3>Add User</h3>
+      <hr>
+      <div class="row">
+        <span class="form-context">First Name:</span>
+        <input type="text" />
+      </div>
+      <div class="row">
+        <span class="form-context">Last Name:</span>
+        <input type="text" />
+      </div>
+      <div class="row">
+        <span class="form-context">Badge Number:</span>
+        <input type="text" />
+      </div>
+      <div class="row">
+        <span class="form-context">Badge Color:</span>
+        <select name="badge-color" style="width: 185px;">
+          <option value="blue">Blue</option>
+          <option value="green">Green</option>
+          <option value="orange">Orange</option>
+          <option value="white">White</option>
+          <option value="red">Red</option>
+        </select>
+      </div>
+      <input type="button" value="Enroll"
+      onclick="getBadge()"/>
+    </div>
+  </div>
+  <div id="swipeBadge" class="modal">
+    <div onclick="document.getElementById('badgeInput').focus()" class="modal-content">
+      <span onclick="closeModal(document.getElementById('swipeBadge'))" class="close">
+        &times;
+      </span>
+      <div id="swipeBadge-content">
+        <span id="swipeBadge-text" class="no-select">Swipe badge on reader</span>
+        <input type="text" id="badgeInput"
+          onfocusin="document.getElementById('swipeBadge-content').style.background = '#76e576'"
+          onfocusout="document.getElementById('swipeBadge-content').style.background = '#e57676'"/>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
