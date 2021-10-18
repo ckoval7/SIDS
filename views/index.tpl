@@ -1,16 +1,17 @@
 <html>
 <head>
   <title>SIDS</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="modal.js"></script>
-  <script src="idService.js"></script>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/modal.js"></script>
+  <script src="/static/idService.js"></script>
 </head>
 <body>
+  % include('header.tpl')
   <div class="main">
-    <h2>SIDS</h2>
     <input type="button" class="big_button no-select" id="newUser" value="Add User"
       onclick="showModal(document.getElementById('addUser'))"/>
-    <input type="button" class="big_button no-select" value="Check User" />
+    <input type="button" class="big_button no-select" value="Check User"
+      onclick="showModal(document.getElementById('checkUser'))"/>
     <br>
     <input type="button" class="big_button no-select" value="Update User" />
     <input type="button" class="big_button no-select" value="Lost Badge" />
@@ -26,19 +27,19 @@
       <hr>
       <div class="row">
         <span class="form-context">First Name:</span>
-        <input type="text" />
+        <input id="newUserFName" type="text" />
       </div>
       <div class="row">
         <span class="form-context">Last Name:</span>
-        <input type="text" />
+        <input id="newUserLName" type="text" />
       </div>
       <div class="row">
         <span class="form-context">Badge Number:</span>
-        <input type="text" />
+        <input id="newUserBadgeNum" type="text" />
       </div>
       <div class="row">
         <span class="form-context">Badge Color:</span>
-        <select name="badge-color" style="width: 185px;">
+        <select id="newUserBadgeColor" name="badge-color" style="width: 185px;">
           <option value="blue">Blue</option>
           <option value="green">Green</option>
           <option value="orange">Orange</option>
@@ -47,9 +48,45 @@
         </select>
       </div>
       <input type="button" value="Enroll"
-      onclick="getBadge()"/>
+      onclick="getBadge(sendNewUser)"/>
     </div>
   </div>
+
+  <div id="checkUser" class="modal">
+    <div class="modal-content">
+      <span onclick="closeModal(document.getElementById('checkUser'))" class="close">
+        &times;
+      </span>
+      <h3>Check User</h3>
+      <hr>
+      <div class="lookup_div">
+        <div class="row"
+          style="margin: auto; width: fit-content; bottom: 30px; position: relative;">
+          <input style="vertical-align: bottom;" class="big_button" type="button"
+            onclick="getBadge(lookupBadge)" value="Read Badge">
+        </div>
+      </div>
+      <div class="lookup_div">
+        <h4>Lookup Name:</h4>
+        <div class="row">
+          <span class="form-context">First Name:</span>
+          <input id="lookupFName" />
+        </div>
+        <div class="row">
+          <span class="form-context">Last Name:</span>
+          <input id="lookupLName" />
+        </div>
+        <div class="row">
+          <span class="form-context">OR</span>
+        </div>
+        <div class="row">
+          <span class="form-context">Badge Number:</span>
+          <input id="lookupBadgeNum" />
+        </div>
+        <input type="button" value="Search">
+    </div>
+  </div>
+
   <div id="swipeBadge" class="modal">
     <div onclick="document.getElementById('badgeInput').focus()" class="modal-content">
       <span onclick="closeModal(document.getElementById('swipeBadge'))" class="close">

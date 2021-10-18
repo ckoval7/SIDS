@@ -20,27 +20,27 @@ password = "badges"
 
 controller1 = DoorController(host, user, password)
 
-access_profile = controller1.getAccessProfileList()["AccessProfile"][0]["token"]
+access_profile = controller1.get_AccessProfileList()["AccessProfile"][0]["token"]
 
 
 def createUser():
     fname = input("First Name: ")
     lname = input("Last Name: ")
-    user_token = controller1.createUser(fname, lname)
+    user_token = controller1.create_user(fname, lname)
     return user_token["Token"][0]
 
 
-def SetCredential(user_token, access_profile):
+def setCredential(user_token, access_profile):
     card_num = input("Enter Badge Number: ")
     card_hex = getpass("Swipe Badge on Reader")
-    return controller1.createCredential(card_num, card_hex, user_token, access_profile)
+    return controller1.create_Credential(card_num, card_hex, user_token, access_profile)
 
 
 def testCredential():
     card_hex = getpass("Swipe Badge on Reader")
-    id_points = controller1.getIdPoints()
+    id_points = controller1.get_IdPoints()
     idp_token = id_points["IdPointInfo"][1]["token"]
-    return controller1.accessRequest(card_hex, idp_token)
+    return controller1.access_request(card_hex, idp_token)
 
 # # Delete all credentials!
 # for cred in creds["Credential"]:
@@ -51,7 +51,7 @@ def testCredential():
 while True:
     try:
         user_token = createUser()
-        print(SetCredential(user_token, access_profile))
+        print(setCredential(user_token, access_profile))
     except Exception as e:
         print("Enrollment Error!")
         print(e)

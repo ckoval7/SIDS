@@ -28,18 +28,21 @@ print("Unit Tests:")
 #     # print(cred["token"])
 #     print(controller1.removeCredential(cred["token"]))
 #
-# creds = controller1.getCredentialList()
-# print(json.dumps(creds, indent=2) + "\n\n")
+creds = controller1.get_CredentialList()
+print(json.dumps(creds, indent=2) + "\n\n")
 
 # print("getUsers:\n")
 # print(json.dumps(users, indent=2) + "\n\n")
 
 # Delete all users!
-users = controller1.getAllUsers()
-print(json.dumps(users, indent=2) + "\n\n")
-for user in users["User"]:
-    print(controller1.removeUser(user["token"]))
-users = controller1.getAllUsers()
+# users = controller1.getAllUsers()
+# print(json.dumps(users, indent=2) + "\n\n")
+# for user in users["User"]:
+#     print(controller1.removeUser(user["token"]))
+# users = controller1.getAllUsers()
+
+# print(controller1.remove_User("Axis-b8a44f251f8a:1634328349.943080000"))
+# print(controller1.remove_Credential("Axis-b8a44f251f8a:1634328360.481909000"))
 #
 # card_num = "8399"
 # card_hex = "0222419f"

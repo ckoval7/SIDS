@@ -4,6 +4,25 @@ body {
   font-family: sans-serif;
 }
 
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  border: 2px solid lightgray;
+  border-collapse: collapse;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 14pt;
+}
+
+th {
+  cursor: pointer;
+}
+
 .col-1 {width: 8.33%;}
 .col-2 {width: 16.66%;}
 .col-3 {width: 25%;}
@@ -38,7 +57,10 @@ body {
 }
 
 .main {
-  max-width: 1024px;
+  /* max-width: 1024px; */
+  width: fit-content;
+  margin: auto;
+  padding-top: 25px;
 }
 
 .big_button {
@@ -83,6 +105,25 @@ body {
   top: 18px;
 }
 
+.logbook h1 {
+  /* margin: auto; */
+  display: table;
+  padding: 10px;
+}
+
+.logbook table {
+  margin: auto;
+}
+
+.logbook {
+  top: 30px;
+  position: relative;
+  margin: auto;
+}
+
+.logbook h1 {
+  margin: auto;
+}
 /* The Modal (background) */
 .modal {
   display: none; /* Hidden by default */
@@ -124,4 +165,9 @@ body {
   color: black;
   text-decoration: none;
   cursor: pointer;
+}
+
+.lookup_div {
+  display: inline-block;
+  width: 40%;
 }
