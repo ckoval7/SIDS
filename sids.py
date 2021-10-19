@@ -9,7 +9,8 @@ from time import sleep
 import sqlite3
 import threading
 from os import system, name, kill, getpid
-from bottle import route, run, request, get, put, response, redirect, template, static_file
+from bottle import (route, run, request, get, put, abort, error,
+                    response, redirect, template, static_file)
 
 host = "172.16.0.206"
 user = "root"
@@ -69,9 +70,55 @@ def entry_log():
     return template('entrylog.tpl', {'log': log})
 
 
+@get('/profile')
+def list_users():
+    conn = sqlite3.connect(database_name)
+    c = conn.cursor()
+    c.execute('''SELECT
+                    users.first_name,
+                    users.last_name,
+                    credentials.card_number,
+                    users.user_id
+                FROM credentials
+                JOIN users ON users.user_id = credentials.user_id''')
+    users = c.fetchall()
+    log = None
+    if users:
+        return template('profile.tpl', {'user_info': users,
+                                        'log': log})
+    else:
+        abort(404, "Error, user not found!")
+
+
 @get('/profile/<badge_number>')
 def show_user(badge_number):
-    return "OK"
+    conn = sqlite3.connect(database_name)
+    c = conn.cursor()
+    c.execute('''SELECT
+                    users.first_name,
+                    users.last_name,
+                    credentials.card_number,
+                    users.user_id
+                FROM credentials
+                JOIN users ON users.user_id = credentials.user_id
+                WHERE card_number = ?''', (badge_number,))
+    users = c.fetchall()
+    if users:
+        user_id = users[0][3]
+        c.execute('''SELECT
+                        access_points.direction AS direction,
+                        timestamp
+                    FROM in_out_log
+                    JOIN access_points ON access_points.ap_id = in_out_log.ap_id
+                    WHERE user_id = ?
+                    ORDER BY timestamp DESC''', (user_id,))
+        log = c.fetchall()
+        # print(users)
+        # return "OK"
+        return template('profile.tpl', {'user_info': users,
+                                        'log': log})
+    else:
+        abort(404, "Error, user not found!")
 
 
 @put('/adduser')
@@ -95,10 +142,44 @@ def create_user():
 
 @put('/lookupbadge')
 def get_user_by_badge_hex():
-    return "OK"
+    data = json.load(request.body)
+    card_hex = data['cardHex']
+    conn = sqlite3.connect(database_name)
+    c = conn.cursor()
+    c.execute('''SELECT card_number FROM credentials WHERE card_hex = ?''',
+              (card_hex,))
+
+    card_num = c.fetchone()
+    if card_num is not None:
+        return f'/profile/{card_num[0]}'
+    else:
+        return '/profile/0'
+    #     abort(404, "Error, user not found!")
 
 
-#check_name
+@put('/lookupname')
+def get_user_by_name():
+    data = json.load(request.body)
+    fname = data['fname']
+    lname = data['lname']
+    conn = sqlite3.connect(database_name)
+    c = conn.cursor()
+    c.execute('''SELECT
+                    card_number
+                FROM credentials
+                JOIN users ON users.user_id = credentials.user_id
+                WHERE users.first_name = ? AND users.last_name = ?''',
+              (fname, lname))
+    user = c.fetchone()
+    if user is not None:
+        return f'/profile/{user[0]}'
+    else:
+        return '/profile/0'
+
+
+@error(404)
+def error404(error):
+    return template('404.tpl', {'error': error})
 
 
 def createDB():
@@ -125,7 +206,7 @@ def createDB():
     ''')
     c.execute('''CREATE TABLE IF NOT EXISTS credentials (
         credential_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        credential_token TEXT,
+        credential_token TEXT UNIQUE,
         valid_from TEXT,
         valid_to TEXT,
         enabled INTEGER,
@@ -280,9 +361,9 @@ def get_last_log_time():
     conn = sqlite3.connect(database_name)
     c = conn.cursor()
     c.execute('SELECT timestamp FROM in_out_log ORDER BY timestamp DESC LIMIT 1')
-    date = c.fetchone()[0]
+    date = c.fetchone()
     if date:
-        return date
+        return date[0]
     else:
         return (datetime.datetime.utcnow().replace(microsecond=0) -
                 datetime.timedelta(minutes=1)).isoformat()

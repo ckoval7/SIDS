@@ -10,11 +10,11 @@
   <div class="main">
     <input type="button" class="big_button no-select" id="newUser" value="Add User"
       onclick="showModal(document.getElementById('addUser'))"/>
-    <input type="button" class="big_button no-select" value="Check User"
+    <input type="button" class="big_button no-select" value="Lookup User"
       onclick="showModal(document.getElementById('checkUser'))"/>
-    <br>
+    <!-- <br>
     <input type="button" class="big_button no-select" value="Update User" />
-    <input type="button" class="big_button no-select" value="Lost Badge" />
+    <input type="button" class="big_button no-select" value="Lost Badge" /> -->
   </div>
 
   <div id="addUser" class="modal">
@@ -83,7 +83,7 @@
           <span class="form-context">Badge Number:</span>
           <input id="lookupBadgeNum" />
         </div>
-        <input type="button" value="Search">
+        <input type="button" value="Search" onclick="lookupName();">
     </div>
   </div>
 

@@ -21,21 +21,19 @@
         <th onclick="sortTable(document.getElementById('user_info-table'), 2)">
           Badge Number
         </th>
-        <th onclick="sortTable(document.getElementById('user_info-table'), 3)">
-          Badge Color
-        </th>
       </tr>
-      % for entry in log:
-        <tr>
-        <td>{{entry[0]}}</td>
-        <td>{{entry[1]}}</td>
-        <td>{{entry[2]}}</td>
-        <td>{{entry[3]}}</td>
+      % for entry in user_info:
+      % badge_num = entry[2]
+      <tr>
+        <td><a href="/profile/{{badge_num}}">{{entry[0]}}</a></td>
+        <td><a href="/profile/{{badge_num}}">{{entry[1]}}</a></td>
+        <td><a href="/profile/{{badge_num}}">{{badge_num}}</a></td>
       </tr>
       % end
     </table>
   </div>
 
+% if log is not None:
   <div class="logbook" id="user_entrylog">
     <h1>Entry/Exit Log</h1>
     <table id="user_entrylog-table">
@@ -46,22 +44,15 @@
         <th onclick="sortTable(document.getElementById('user_entrylog-table'), 1)">
           Direction
         </th>
-        <!-- <th onclick="sortTable(document.getElementById('user_entrylog-table'), 2)">
-          Badge Number
-        </th>
-        <th onclick="sortTable(document.getElementById('user_entrylog-table'), 3)">
-          Badge Color
-        </th> -->
       </tr>
       % for entry in log:
         <tr>
         <td>{{entry[0]}}</td>
         <td>{{entry[1]}}</td>
-        <!-- <td>{{entry[2]}}</td>
-        <td>{{entry[3]}}</td> -->
       </tr>
       % end
     </table>
   </div>
+% end
 </body>
 </html>

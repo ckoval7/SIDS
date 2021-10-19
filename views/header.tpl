@@ -5,6 +5,9 @@
       <a href="/">Home</a>
     </li>
     <li>
+      <a href="/profile">Users</a>
+    </li>
+    <li>
       <a href="/whoshere">Who's Here</a>
     </li>
     <li>
