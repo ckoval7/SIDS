@@ -1,6 +1,6 @@
 <html>
 <head>
-  <title>User Profile - </title>
+  <title>User Profile</title>
   <link rel="stylesheet" href="/static/style.css" />
   <script src="/static/utilities.js"></script>
 </head>
@@ -32,9 +32,9 @@
       % end
     </table>
   </div>
-
 % if log is not None:
   <div class="logbook" id="user_entrylog">
+    <hr>
     <h1>Entry/Exit Log</h1>
     <table id="user_entrylog-table">
       <tr>

@@ -37,7 +37,7 @@
         <span class="form-context">Badge Number:</span>
         <input id="newUserBadgeNum" type="text" />
       </div>
-      <div class="row">
+      <!-- <div class="row">
         <span class="form-context">Badge Color:</span>
         <select id="newUserBadgeColor" name="badge-color" style="width: 185px;">
           <option value="blue">Blue</option>
@@ -46,7 +46,7 @@
           <option value="white">White</option>
           <option value="red">Red</option>
         </select>
-      </div>
+      </div> -->
       <input type="button" value="Enroll"
       onclick="getBadge(sendNewUser)"/>
     </div>

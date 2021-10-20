@@ -13,5 +13,8 @@
     <li>
       <a href="/entrylog">Entry/Exit Log</a>
     </li>
+    <!-- <li>
+      <a href="/doors">Doors</a>
+    </li> -->
   </ul>
 </div>

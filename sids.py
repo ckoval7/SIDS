@@ -185,6 +185,14 @@ def error404(error):
 def createDB():
     conn = sqlite3.connect(database_name)
     c = conn.cursor()
+    c.execute('''CREATE TABLE IF NOT EXISTS doors (
+        door_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        token TEXT UNIQUE,
+        name TEXT,
+        host TEXT,
+        password TEXT
+        )
+    ''')
     c.execute('''CREATE TABLE IF NOT EXISTS access_points (
         ap_id INTEGER PRIMARY KEY AUTOINCREMENT,
         token TEXT UNIQUE,
