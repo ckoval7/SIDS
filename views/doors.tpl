@@ -22,7 +22,7 @@
         <th onclick="sortTable(document.getElementById('door_info-table'), 2)">
           Tier
         </th>
-        <th onclick="sortTable(document.getElementById('door_info-table'), 2)">
+        <th onclick="sortTable(document.getElementById('door_info-table'), 3)">
           Password Set
         </th>
       </tr>
