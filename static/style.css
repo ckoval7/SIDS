@@ -17,6 +17,7 @@ table, th, td {
   padding-left: 10px;
   padding-right: 10px;
   font-size: 14pt;
+  margin: auto;
 }
 
 th {
@@ -77,6 +78,20 @@ th {
   background-color: #f1f1f1;
 }
 
+.medium_button {
+  display: inline-block;
+  width: 180px;
+  height: 70px;
+  font-size: 30px;
+  text-align: center;
+  margin: 5px;
+  background-color: #d5d5d5;
+  border-radius: 8px;
+}
+.medium_button:hover {
+  background-color: #f1f1f1;
+}
+
 .form-context {
   width: 140px;
   display: inline-block;
@@ -105,25 +120,18 @@ th {
   top: 18px;
 }
 
-.logbook h1 {
-  /* margin: auto; */
+.logbook h1, .doors h1 {
+  margin: auto;
   display: table;
   padding: 10px;
 }
 
-.logbook table {
-  margin: auto;
-}
-
-.logbook {
+.logbook, .doors {
   top: 30px;
   position: relative;
   margin: auto;
 }
 
-.logbook h1 {
-  margin: auto;
-}
 /* The Modal (background) */
 .modal {
   display: none; /* Hidden by default */

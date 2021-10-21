@@ -20,20 +20,30 @@
           Host
         </th>
         <th onclick="sortTable(document.getElementById('door_info-table'), 2)">
-          Password
+          Tier
+        </th>
+        <th onclick="sortTable(document.getElementById('door_info-table'), 2)">
+          Password Set
         </th>
       </tr>
       % for entry in door_info:
       <tr>
-        <td>{{entry[0]}}</a></td>
-        <td>{{entry[1]}}</a></td>
+        <td>{{entry[0]}}</td>
+        <td>{{entry[1]}}</td>
         <td>{{entry[2]}}</td>
+        % if entry[3]:
+        <td style="color: #0F0; text-align: center;">&check;</td>
+        % else:
+        <td style="color: #F00; text-align: center;">&cross;</td>
+        % end
       </tr>
       % end
     </table>
   </div>
-  <input type="button" class="big_button no-select" id="newDoor" value="Add Door"
-    onclick="showModal(document.getElementById('addDoor'))"/>
+  <div>
+    <input type="button" class="medium_button no-select" id="newDoor" value="Add Door"
+      onclick="showModal(document.getElementById('addDoor'))"/>
+  </div>
 
   <div id="addDoor" class="modal">
     <!-- Modal content -->
@@ -51,8 +61,16 @@
         <span class="form-context">Password:</span>
         <input type="password" id="newDoorPassword" />
       </div>
+      <div class="row">
+        <span class="form-context">Tier:</span>
+        <select id="newUserBadgeColor" name="badge-color" style="width: 185px;">
+          <option value="primary">Primary</option>
+          <option value="secondary">Secondary</option>
+          <option value="stanard">Standard</option>
+        </select>
+      </div>
       <input type="button" value="Submit"
-      onclick="getBadge(sendNewDoor)"/>
+      onclick="sendNewDoor()"/>
     </div>
   </div>
 </body>

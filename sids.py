@@ -121,6 +121,19 @@ def show_user(badge_number):
         abort(404, "Error, user not found!")
 
 
+@get('/door')
+def show_doors():
+    return template('doors.tpl',
+                    {"door_info": [["Door1",
+                                    "192.168.0.10",
+                                    "Primary",
+                                    True],
+                                   ["Door2",
+                                    "192.168.0.11",
+                                    "Secondary",
+                                    False]]})
+
+
 @put('/adduser')
 def create_user():
     # return "OK"
@@ -190,7 +203,8 @@ def createDB():
         token TEXT UNIQUE,
         name TEXT,
         host TEXT,
-        password TEXT
+        password TEXT,
+        tier TEXT
         )
     ''')
     c.execute('''CREATE TABLE IF NOT EXISTS access_points (
