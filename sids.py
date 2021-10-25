@@ -353,15 +353,20 @@ def log_in_out(log):
                         user_token = x["Value"]
                         c.execute('SELECT user_id FROM users WHERE user_token = ?',
                                   (user_token,))
-                        user_id = c.fetchone()[0]
-                        if status == "in":
-                            c.execute('''UPDATE users SET status = ?,
-                                last_time_in = ?
-                            WHERE user_id = ?''', (status, time, user_id))
-                        elif status == "out":
-                            c.execute('''UPDATE users SET status = ?,
-                                last_time_out = ?
-                            WHERE user_id = ?''', (status, time, user_id))
+                        user_granted = c.fetchone()
+                        if user_granted is not None:
+                            user_id = user_granted[0]
+                            if status == "in":
+                                c.execute('''UPDATE users SET status = ?,
+                                    last_time_in = ?
+                                WHERE user_id = ?''', (status, time, user_id))
+                            elif status == "out":
+                                c.execute('''UPDATE users SET status = ?,
+                                    last_time_out = ?
+                                WHERE user_id = ?''', (status, time, user_id))
+
+                        else:
+                            user_id = None
 
                         # print(f'Status: {status}')
             elif topic["Value"] == "Denied":

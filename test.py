@@ -27,9 +27,15 @@ print("Unit Tests:")
 # for cred in creds["Credential"]:
 #     # print(cred["token"])
 #     print(controller1.removeCredential(cred["token"]))
-#
+# "Axis-b8a44f251f8a:1634433688.368370000"
+
+print(controller1.remove_Credential("Axis-b8a44f251f8a:1634433688.408093000"))
+print(controller1.remove_Credential("Axis-b8a44f251f8a:1634431461.684629000"))
+print(controller1.remove_User("Axis-b8a44f251f8a:1634431461.647329000"))
+print(controller1.remove_User("Axis-b8a44f251f8a:1634433688.368370000"))
 creds = controller1.get_CredentialList()
 print(json.dumps(creds, indent=2) + "\n\n")
+
 
 # print("getUsers:\n")
 # print(json.dumps(users, indent=2) + "\n\n")
