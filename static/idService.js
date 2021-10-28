@@ -50,6 +50,38 @@ function sendNewUser() {
       });
 }
 
+
+function sendNewDoor() {
+  let data = {};
+  data.host = document.getElementById("newDoorHost").value;
+  data.username = document.getElementById("newDoorUser").value;
+  data.password = document.getElementById("newDoorPassword").value;
+  data.tier = document.getElementById("newDoorTier").value;
+  for (const i in data) {
+    if (!data[i]) {
+      alert("Fill in all the fields!");
+      return "Error!";
+    }
+    console.log(data[i]);
+  }
+  const otherParams = {
+      headers: {
+          "content-type": "application/json"
+      },
+      body: JSON.stringify(data),
+      method: "PUT"
+  };
+
+  fetch(`/adddoor`, otherParams)
+      .then(res => {
+        alert("Door Added");
+        closeModal(document.getElementById("addDoor"));
+        document.getElementById("newDoorHost").value = "";
+        document.getElementById("newDoorUser").value = "";
+        document.getElementById("newDoorPassword").value = "";
+      });
+}
+
 function lookupBadge() {
   let data = {};
   data.cardHex = document.getElementById("badgeInput").value;

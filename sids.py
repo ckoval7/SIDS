@@ -12,13 +12,15 @@ from os import system, name, kill, getpid
 from bottle import (route, run, request, get, put, abort, error,
                     response, redirect, template, static_file)
 
-host = "172.16.0.206"
-user = "root"
-password = "badges"
-
-controller1 = DoorController(host, user, password)
+# host = "172.16.0.206"
+# user = "root"
+# password = "badges"
+#
+# controller1 = DoorController(host, user, password)
 database_name = "test1.db"
 
+
+# TODO: Handle "urllib3.exceptions.MaxRetryError"
 
 ###############################################
 # Serves static files such as CSS and JS to the
@@ -123,32 +125,31 @@ def show_user(badge_number):
 
 @get('/door')
 def show_doors():
+    conn = sqlite3.connect(database_name)
+    c = conn.cursor()
+    c.execute('''SELECT name, host, tier, password FROM doors''')
+    doors = c.fetchall()
+
     return template('doors.tpl',
-                    {"door_info": [["Door1",
-                                    "192.168.0.10",
-                                    "Primary",
-                                    True],
-                                   ["Door2",
-                                    "192.168.0.11",
-                                    "Secondary",
-                                    False]]})
+                    {"door_info": doors})
 
 
 @put('/adduser')
 def create_user():
-    # return "OK"
     data = json.load(request.body)
     fname = data['fname']
     lname = data['lname']
     card_num = data['cardNum']
     card_hex = data['cardHex']
-    access_profile = controller1.get_AccessProfileList()["AccessProfile"][0]["token"]
 
-    user_token = controller1.create_user(fname, lname)["Token"][0]
-    # user_token["Token"][0]
-    cred_token = controller1.create_Credential(card_num, card_hex, user_token, access_profile)
-    get_users()
-    get_credentials()
+    # TODO: Handle more than 1 controller with tiers!
+    for door in door_list:
+        access_profile = door.get_AccessProfileList()["AccessProfile"][0]["token"]
+        user_token = door.create_user(fname, lname)["Token"][0]
+        # user_token["Token"][0]
+        cred_token = door.create_Credential(card_num, card_hex, user_token, access_profile)
+        get_users(door)
+        get_credentials(door)
     print(f"Added new user: {fname} {lname}, {user_token}")
     return cred_token
 
@@ -189,6 +190,27 @@ def get_user_by_name():
     else:
         return '/profile/0'
 
+@put('/adddoor')
+def add_door():
+    data = json.load(request.body)
+    host = data['host']
+    password = data['password']
+    tier = data['tier']
+    user = data['username']
+    this_controller = DoorController(host, user, password)
+    #get token and name
+    door_info = this_controller.get_controllers()
+    token = door_info["AccessController"][0]["token"]
+    name = door_info["AccessController"][0]["Name"]
+    conn = sqlite3.connect(database_name)
+    c = conn.cursor()
+    c.execute('''INSERT OR IGNORE INTO
+                    doors(token, name, host, user, password, tier)
+                    VALUES(?, ?, ?, ?, ?, ?)''',
+              (token, name, host, user, password, tier))
+    conn.commit()
+    return "OK"
+
 
 @error(404)
 def error404(error):
@@ -203,6 +225,7 @@ def createDB():
         token TEXT UNIQUE,
         name TEXT,
         host TEXT,
+        user TEXT,
         password TEXT,
         tier TEXT
         )
@@ -254,8 +277,25 @@ def createDB():
     conn.commit()
 
 
-def get_accesspoints():
-    ap_list = controller1.get_AccessPointList()
+def get_doors():
+    doors = []
+    conn = sqlite3.connect(database_name)
+    c = conn.cursor()
+    c.execute('''SELECT host, user, password FROM doors''')
+    all_doors = c.fetchall()
+    if all_doors is not None:
+        for door in all_doors:
+            host = door[0]
+            user = door[1]
+            password = door[2]
+            controller = DoorController(host, user, password)
+            doors.append(controller)
+
+    return doors
+
+
+def get_accesspoints(door):
+    ap_list = door.get_AccessPointList()
     for ap in ap_list["AccessPoint"]:
         token = ap["token"]
         for attribute in ap["Attribute"]:
@@ -270,8 +310,8 @@ def get_accesspoints():
         conn.commit()
 
 
-def get_users():
-    users = controller1.get_all_users()
+def get_users(door):
+    users = door.get_all_users()
     for user in users["User"]:
         token = user["token"]
         status = "out"
@@ -289,10 +329,11 @@ def get_users():
         conn.commit()
 
 
-def get_credentials():
+def get_credentials(door):
     conn = sqlite3.connect(database_name)
     c = conn.cursor()
-    credentials = controller1.get_CredentialList()
+
+    credentials = door.get_CredentialList()
     for credential in credentials["Credential"]:
         token = credential["token"]
         user_token = credential["UserToken"]
@@ -447,15 +488,22 @@ if __name__ == '__main__':
 
     try:
         createDB()
-        get_accesspoints()
-        get_users()
-        get_credentials()
-        key = "topic0"
-        value = "AccessControl"
-        start = (datetime.datetime.utcnow().replace(microsecond=0) -
-                 datetime.timedelta(hours=24)).isoformat()  # "2012-11-27T00:00:00"
-        stop = datetime.datetime.utcnow().replace(microsecond=0).isoformat()
-        log_in_out(controller1.get_EventLog(start, stop, key, value))
+        door_list = get_doors()
+        while not door_list:
+            print("No doors, sleeping for 10 seconds.")
+            sleep(10)
+            door_list = get_doors()
+
+        for door in door_list:
+            get_accesspoints(door)
+            get_users(door)
+            get_credentials(door)
+            key = "topic0"
+            value = "AccessControl"
+            start = (datetime.datetime.utcnow().replace(microsecond=0) -
+                     datetime.timedelta(hours=24)).isoformat()  # "2012-11-27T00:00:00"
+            stop = datetime.datetime.utcnow().replace(microsecond=0).isoformat()
+            log_in_out(door.get_EventLog(start, stop, key, value))
 
         while True:
             sleep(10)
@@ -463,7 +511,9 @@ if __name__ == '__main__':
             #          datetime.timedelta(minutes=1)).isoformat()  # "2012-11-27T00:00:00"
             start = get_last_log_time()
             stop = datetime.datetime.utcnow().replace(microsecond=0).isoformat()
-            log_in_out(controller1.get_EventLog(start, stop, key, value))
+            for door in door_list:
+                log_in_out(door.get_EventLog(start, stop, key, value))
+
 
     except KeyboardInterrupt:
         finish()

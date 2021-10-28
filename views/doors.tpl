@@ -4,6 +4,7 @@
   <link rel="stylesheet" href="/static/style.css" />
   <script src="/static/utilities.js"></script>
   <script src="/static/modal.js"></script>
+  <script src="/static/idService.js"></script>
 </head>
 
 <body>
@@ -58,12 +59,16 @@
         <input id="newDoorHost" type="text" />
       </div>
       <div class="row">
+        <span class="form-context">Username:</span>
+        <input id="newDoorUser" type="text" />
+      </div>
+      <div class="row">
         <span class="form-context">Password:</span>
         <input type="password" id="newDoorPassword" />
       </div>
       <div class="row">
         <span class="form-context">Tier:</span>
-        <select id="newUserBadgeColor" name="badge-color" style="width: 185px;">
+        <select id="newDoorTier" name="badge-color" style="width: 185px;">
           <option value="primary">Primary</option>
           <option value="secondary">Secondary</option>
           <option value="stanard">Standard</option>
