@@ -84,6 +84,7 @@
           <input id="lookupBadgeNum" />
         </div>
         <input type="button" value="Search" onclick="lookupName();">
+      </div>
     </div>
   </div>
 
